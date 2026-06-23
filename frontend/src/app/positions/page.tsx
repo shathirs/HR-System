@@ -10,12 +10,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import Table from "@/components/ui/Table";
 import { getStoredUser } from "@/lib/auth";
 import { getDepartments } from "@/lib/departments";
-import {
-  createPosition,
-  deletePosition,
-  getPositions,
-  updatePosition,
-} from "@/lib/positions";
+import { createPosition, deletePosition, getPositions, updatePosition, } from "@/lib/positions";
 import type { Department } from "@/types/department";
 import type { Position } from "@/types/position";
 
