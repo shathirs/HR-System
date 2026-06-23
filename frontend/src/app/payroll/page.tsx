@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
@@ -57,6 +58,8 @@ export default function PayrollPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPayroll, setEditingPayroll] = useState<Payroll | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [employeeId, setEmployeeId] = useState("");
   const [month, setMonth] = useState(String(new Date().getMonth() + 1));
@@ -184,16 +187,22 @@ export default function PayrollPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this payroll record?")) return;
+  async function confirmDelete() {
+    if (!deleteId) {
+      return;
+    }
 
+    setDeleting(true);
     setError("");
 
     try {
-      await deletePayroll(id);
+      await deletePayroll(deleteId);
       await loadData();
+      setDeleteId(null);
     } catch {
       setError("Failed to delete payroll record");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -257,14 +266,14 @@ export default function PayrollPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant="success"
                         onClick={() => openEditModal(payroll)}
                       >
                         Edit
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => handleDelete(payroll.id)}
+                        onClick={() => setDeleteId(payroll.id)}
                       >
                         Delete
                       </Button>
@@ -372,6 +381,14 @@ export default function PayrollPage() {
           </Button>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={deleteId !== null}
+        message="Are you sure you want to delete this payroll record? This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+        loading={deleting}
+      />
     </Card>
   );
 }

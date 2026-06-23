@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import FileUpload from "@/components/ui/FileUpload";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
@@ -71,6 +72,9 @@ export default function EmployeesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [employeeDeleteId, setEmployeeDeleteId] = useState<string | null>(null);
+  const [documentDeleteId, setDocumentDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   const [employeeCode, setEmployeeCode] = useState("");
@@ -286,31 +290,43 @@ export default function EmployeesPage() {
     }
   }
 
-  async function handleDeleteEmployee(id: string) {
-    if (!confirm("Delete this employee?")) return;
+  async function confirmDeleteEmployee() {
+    if (!employeeDeleteId) {
+      return;
+    }
 
+    setDeleting(true);
     setError("");
 
     try {
-      await deleteEmployee(id);
+      await deleteEmployee(employeeDeleteId);
       await loadData();
+      setEmployeeDeleteId(null);
     } catch {
       setError("Failed to delete employee");
+    } finally {
+      setDeleting(false);
     }
   }
 
-  async function handleDeleteDocument(documentId: string) {
-    if (!confirm("Delete this document?")) return;
+  async function confirmDeleteDocument() {
+    if (!documentDeleteId) {
+      return;
+    }
 
+    setDeleting(true);
     setError("");
 
     try {
-      await deleteEmployeeDocument(documentId);
+      await deleteEmployeeDocument(documentDeleteId);
       if (editingEmployee) {
         await loadDocuments(editingEmployee.id);
       }
+      setDocumentDeleteId(null);
     } catch {
       setError("Failed to delete document");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -378,14 +394,14 @@ export default function EmployeesPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant="success"
                         onClick={() => openEditModal(employee)}
                       >
                         Edit
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => handleDeleteEmployee(employee.id)}
+                        onClick={() => setEmployeeDeleteId(employee.id)}
                       >
                         Delete
                       </Button>
@@ -604,7 +620,7 @@ export default function EmployeesPage() {
                           <Button
                             type="button"
                             variant="danger"
-                            onClick={() => handleDeleteDocument(document.id)}
+                            onClick={() => setDocumentDeleteId(document.id)}
                           >
                             Delete
                           </Button>
@@ -622,6 +638,22 @@ export default function EmployeesPage() {
           </Button>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={employeeDeleteId !== null}
+        message="Are you sure you want to delete this employee? This action cannot be undone."
+        onConfirm={confirmDeleteEmployee}
+        onCancel={() => setEmployeeDeleteId(null)}
+        loading={deleting}
+      />
+
+      <ConfirmDialog
+        isOpen={documentDeleteId !== null}
+        message="Are you sure you want to delete this document? This action cannot be undone."
+        onConfirm={confirmDeleteDocument}
+        onCancel={() => setDocumentDeleteId(null)}
+        loading={deleting}
+      />
     </Card>
   );
 }

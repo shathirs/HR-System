@@ -20,7 +20,7 @@ export default function Modal({ isOpen, title, onClose, children }: ModalProps) 
       <div className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-subheading font-semibold">{title}</h2>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="danger" onClick={onClose}>
             Close
           </Button>
         </div>

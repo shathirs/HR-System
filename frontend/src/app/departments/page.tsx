@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -31,6 +32,8 @@ export default function DepartmentsPage() {
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function loadDepartments() {
     setLoading(true);
@@ -100,18 +103,22 @@ export default function DepartmentsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this department?")) {
+  async function confirmDelete() {
+    if (!deleteId) {
       return;
     }
 
+    setDeleting(true);
     setError("");
 
     try {
-      await deleteDepartment(id);
+      await deleteDepartment(deleteId);
       await loadDepartments();
+      setDeleteId(null);
     } catch {
       setError("Failed to delete department");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -165,14 +172,14 @@ export default function DepartmentsPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant="success"
                         onClick={() => openEditModal(department)}
                       >
                         Edit
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => handleDelete(department.id)}
+                        onClick={() => setDeleteId(department.id)}
                       >
                         Delete
                       </Button>
@@ -217,6 +224,14 @@ export default function DepartmentsPage() {
           </Button>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={deleteId !== null}
+        message="Are you sure you want to delete this department? This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+        loading={deleting}
+      />
     </Card>
   );
 }

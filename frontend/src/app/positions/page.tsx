@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
@@ -29,6 +30,8 @@ export default function PositionsPage() {
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const departmentMap = Object.fromEntries(
     departments.map((department) => [department.id, department.name]),
@@ -110,18 +113,22 @@ export default function PositionsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this position?")) {
+  async function confirmDelete() {
+    if (!deleteId) {
       return;
     }
 
+    setDeleting(true);
     setError("");
 
     try {
-      await deletePosition(id);
+      await deletePosition(deleteId);
       await loadData();
+      setDeleteId(null);
     } catch {
       setError("Failed to delete position");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -180,14 +187,14 @@ export default function PositionsPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant="success"
                         onClick={() => openEditModal(position)}
                       >
                         Edit
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => handleDelete(position.id)}
+                        onClick={() => setDeleteId(position.id)}
                       >
                         Delete
                       </Button>
@@ -243,6 +250,14 @@ export default function PositionsPage() {
           </Button>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={deleteId !== null}
+        message="Are you sure you want to delete this position? This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+        loading={deleting}
+      />
     </Card>
   );
 }
