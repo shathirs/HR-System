@@ -23,7 +23,7 @@ export default function Navbar() {
           </p>
         )}
       </div>
-      <Button variant="secondary" onClick={handleLogout}>
+      <Button variant="danger" onClick={handleLogout}>
         Logout
       </Button>
     </header>
