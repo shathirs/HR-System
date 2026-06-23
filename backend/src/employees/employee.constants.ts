@@ -1,0 +1,33 @@
+export enum EmployeeStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ONBOARDING = 'ONBOARDING',
+  TERMINATED = 'TERMINATED',
+}
+
+export enum EmploymentType {
+  FULL_TIME = 'FULL_TIME',
+  PART_TIME = 'PART_TIME',
+  CONTRACT = 'CONTRACT',
+  INTERN = 'INTERN',
+}
+
+export enum DocumentType {
+  NIC_ID_COPY = 'NIC_ID_COPY',
+  PASSPORT_COPY = 'PASSPORT_COPY',
+  CV_RESUME = 'CV_RESUME',
+  EDUCATION_CERTIFICATE = 'EDUCATION_CERTIFICATE',
+  PREVIOUS_EMPLOYMENT_LETTER = 'PREVIOUS_EMPLOYMENT_LETTER',
+  BANK_DETAILS = 'BANK_DETAILS',
+  SIGNED_CONTRACT = 'SIGNED_CONTRACT',
+  OTHER = 'OTHER',
+}
+
+export const ALLOWED_DOCUMENT_MIME_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+] as const;
+
+export const MAX_DOCUMENT_SIZE_BYTES = 5 * 1024 * 1024;
