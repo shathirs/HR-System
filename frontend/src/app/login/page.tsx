@@ -16,11 +16,17 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+  const [disableAutocomplete, setDisableAutocomplete] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem(LOGOUT_MESSAGE_KEY) === "true") {
       sessionStorage.removeItem(LOGOUT_MESSAGE_KEY);
       setSuccess("Logged out successfully");
+      setEmail("");
+      setPassword("");
+      setDisableAutocomplete(true);
+      setFormKey((current) => current + 1);
     }
   }, []);
 
@@ -66,7 +72,12 @@ export default function LoginPage() {
           </>
         }
       >
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form
+          key={formKey}
+          onSubmit={handleSubmit}
+          autoComplete="off"
+          className="flex flex-col gap-5"
+        >
           <Input
             label="Email address"
             type="email"
@@ -74,6 +85,7 @@ export default function LoginPage() {
             placeholder="you@company.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            autoComplete={disableAutocomplete ? "off" : "email"}
             className="bg-surface/50 py-2.5"
             required
           />
@@ -84,6 +96,7 @@ export default function LoginPage() {
             placeholder="Enter your password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
+            autoComplete={disableAutocomplete ? "new-password" : "current-password"}
             className="bg-surface/50 py-2.5"
             required
           />
