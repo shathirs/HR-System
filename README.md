@@ -20,7 +20,7 @@ Full-stack HR management application with employee onboarding, document manageme
 ## Project Structure
 
 ```
-Interview/
+HR-System/
 ├── backend/          # NestJS REST API (port 5000)
 ├── frontend/         # Next.js app (port 3000)
 └── README.md
