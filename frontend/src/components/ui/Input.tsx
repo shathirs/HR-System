@@ -17,13 +17,13 @@ export default function Input({
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label htmlFor={inputId} className="text-body font-medium">
+        <label htmlFor={inputId} className="text-body font-medium text-secondary">
           {label}
         </label>
       )}
       <input
         id={inputId}
-        className={`rounded-md border border-secondary/30 px-3 py-2 text-body outline-none focus:border-primary ${className}`}
+        className={`rounded-lg border border-secondary/30 bg-white px-3 py-2 text-body outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 ${className}`}
         {...props}
       />
       {error && <p className="text-caption text-danger">{error}</p>}

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import AuthLayout from "@/components/layout/AuthLayout";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import { register } from "@/lib/auth";
 
@@ -32,45 +32,63 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface p-4">
-      <Card title="Register" className="w-full max-w-md">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Input
-            label="Name"
-            type="text"
-            name="name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-          />
-          <Input
-            label="Email"
-            type="email"
-            name="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-          <Input
-            label="Password"
-            type="password"
-            name="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-          {error && <p className="text-body text-danger">{error}</p>}
-          <Button type="submit" disabled={loading}>
-            {loading ? "Creating account..." : "Create account"}
-          </Button>
-        </form>
-        <p className="mt-4 text-body text-secondary">
+    <AuthLayout
+      title="Create account"
+      subtitle="Join the HR system to manage your workspace"
+      footer={
+        <>
           Already have an account?{" "}
-          <Link href="/login" className="font-medium underline">
-            Login
+          <Link
+            href="/login"
+            className="font-semibold text-primary hover:text-primary/80"
+          >
+            Sign in
           </Link>
-        </p>
-      </Card>
-    </div>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <Input
+          label="Full name"
+          type="text"
+          name="name"
+          placeholder="John Doe"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          className="bg-surface/50 py-2.5"
+          required
+        />
+        <Input
+          label="Email address"
+          type="email"
+          name="email"
+          placeholder="you@company.com"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          className="bg-surface/50 py-2.5"
+          required
+        />
+        <Input
+          label="Password"
+          type="password"
+          name="password"
+          placeholder="Create a secure password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          className="bg-surface/50 py-2.5"
+          required
+        />
+
+        {error && (
+          <p className="rounded-lg border border-danger/20 bg-danger/10 px-3 py-2 text-body text-danger">
+            {error}
+          </p>
+        )}
+
+        <Button type="submit" disabled={loading} className="w-full py-2.5">
+          {loading ? "Creating account..." : "Create account"}
+        </Button>
+      </form>
+    </AuthLayout>
   );
 }
